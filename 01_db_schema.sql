@@ -5,33 +5,48 @@ USE ozon;
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY  COMMENT "Идентификатор строки",    
-  email VARCHAR(100) NOT NULL UNIQUE COMMENT "Почта",
-  phone VARCHAR(100) NOT NULL UNIQUE COMMENT "Телефон",
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,    
+  email VARCHAR(100) NOT NULL UNIQUE,
+  phone VARCHAR(100) NOT NULL UNIQUE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT phone CHECK (REGEXP_LIKE(phone, '^\\+7[0-9]{10}$')),
+  CONSTRAINT email CHECK (REGEXP_LIKE(email, '^[a-zA-Z0-9_\-]+\@([a-zA-Z0-9_\.])+([a-z])$'))
 );
 
+TRUNCATE users; 
+
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE profiles;
 
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE companies;
 
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE ozon_cards;
 
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE catalogs;
 
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE subcatalogs;
 
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE products;
 
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE orders;
 
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE discounts;
 
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE reviews;
 
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE orders_users;
 
 # как эффективно релизовать избранные товары?
+DROP TABLE IF EXISTS profiles;
 CREATE TABLE favourites;
 
