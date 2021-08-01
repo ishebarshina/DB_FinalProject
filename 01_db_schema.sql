@@ -139,8 +139,10 @@ CREATE TABLE reviews(
 DROP TABLE IF EXISTS favourites;
 CREATE TABLE favourites(
 	id SERIAL PRIMARY KEY,
-	user_id BIGINT UNSIGNED NOT NULL,
-	product_id BIGINT UNSIGNED NOT NULL
+	fk_fv_user_id BIGINT UNSIGNED NOT NULL,
+	fk_fv_product_id INT UNSIGNED NOT NULL,
+	FOREIGN KEY (fk_fv_product_id) REFERENCES products (id),
+	FOREIGN KEY (fk_fv_user_id) REFERENCES users (id)
 );
 
 
