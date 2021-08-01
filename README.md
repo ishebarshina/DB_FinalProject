@@ -49,4 +49,4 @@
 В таблицах orders и orders_products описаны сделанные пользователями заказы.
 
 ## ERDiagram
-![ER Diaram](~/shared/MySQL/ER_ozon_1.svg)
+![ER Diaram](/ERDiagram/ER_ozon_2.svg)
