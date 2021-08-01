@@ -110,18 +110,19 @@ CREATE TABLE discounts (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	fk_d_user_id BIGINT UNSIGNED,
 	fk_d_product_id INT UNSIGNED,
-	discount FLOAT UNSIGNED COMMENT 'Величина скидки от 0.0 до 1.0',
+	discount FLOAT DEFAULT 0.0 COMMENT 'Величина скидки от 0.0 до 1.0',
 	only_ozon_card ENUM('0', '1'),
 	CONSTRAINT discout CHECK (discount >= 0 AND discount < 1),
 	FOREIGN KEY (fk_d_user_id) REFERENCES users (id),
-	FOREIGN KEY (fk_d_product_id) REFERENCES products (id)
+	FOREIGN KEY (fk_d_product_id) REFERENCES products (id),
+	CHECK (fk_d_user_id IS NULL XOR fk_d_product_id IS NULL)
 );
 
 DROP TABLE IF EXISTS cashback_ozon_card;
 CREATE TABLE cashback_ozon_card (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	fk_cb_catalog_id INT UNSIGNED NOT NULL,
-	cashback FLOAT UNSIGNED COMMENT 'Величина кешбэка от 0.0 до 1.0',
+	cashback FLOAT DEFAULT 0.05 COMMENT 'Величина кешбэка от 0.0 до 1.0',
 	FOREIGN KEY (fk_cb_catalog_id) REFERENCES catalogs (id)
 );
 
