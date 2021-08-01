@@ -77,13 +77,21 @@ CREATE TABLE products(
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL,
 	fk_pd_catalog_id INT UNSIGNED NOT NULL,
-	fk_pd_shop_id INT UNSIGNED NOT NULL,
-	price DECIMAL (11,2) NOT NULL,  
 	desription TEXT,
 	rating FLOAT,
-	FOREIGN KEY (fk_pd_catalog_id) REFERENCES catalogs (id) ON DELETE CASCADE ON UPDATE CASCADE, 
-	FOREIGN KEY (fk_pd_shop_id) REFERENCES shops (id) ON DELETE CASCADE ON UPDATE CASCADE,
-	UNIQUE ix_pd_shop (name, fk_pd_shop_id)
+	FOREIGN KEY (fk_pd_catalog_id) REFERENCES catalogs (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+DROP TABLE IF EXISTS products_shops;
+CREATE TABLE produtcs_shops (
+	id SERIAL PRIMARY KEY,
+	fk_product_id INT UNSIGNED NOT NULL,
+	fk_shop_id INT UNSIGNED NOT NULL,
+	price DECIMAL (11,2) NOT NULL,
+	total INT UNSIGNED NOT NULL,
+	FOREIGN KEY (fk_product_id) REFERENCES products (id) ON DELETE CASCADE ON UPDATE CASCADE, 
+	FOREIGN KEY (fk_shop_id) REFERENCES shops (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	UNIQUE ix_pd_shop (fk_product_id, fk_shop_id)
 );
 
 DROP TABLE IF EXISTS orders;
