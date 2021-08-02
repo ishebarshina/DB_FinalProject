@@ -10,8 +10,9 @@ CREATE TABLE users (
  	phone VARCHAR(100) NOT NULL UNIQUE,
  	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
  	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	CONSTRAINT phone CHECK (REGEXP_LIKE(phone, '^\+7([0-9]{10})$')),
-	CONSTRAINT email CHECK (REGEXP_LIKE(email, '^[a-zA-Z0-9_\-]+\@([a-zA-Z0-9_\.])+([a-z])$'))
+	CONSTRAINT phone_regexp CHECK (REGEXP_LIKE(phone, '^\\+7[0-9]{10}$')),
+	CONSTRAINT email_regexp CHECK (REGEXP_LIKE(email, '^[a-zA-Z0-9_\-]+\@([a-zA-Z0-9_\.])+([a-zA-Z0-9_\-])$'))
+	-- ([a-z])
 );
 
 DROP TABLE IF EXISTS cities;
@@ -23,7 +24,7 @@ CREATE TABLE cities (
 DROP TABLE IF EXISTS profiles;
 CREATE TABLE profiles (
 	id SERIAL PRIMARY KEY,
-	fk_pf_user_id BIGINT UNSIGNED NOT NULL,
+	fk_pf_user_id BIGINT UNSIGNED NOT NULL UNIQUE,
 	fk_pf_city_id INT UNSIGNED,
 	first_name VARCHAR(100) NOT NULL,
 	last_name VARCHAR(100) NOT NULL,
@@ -33,7 +34,7 @@ CREATE TABLE profiles (
  	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
  	INDEX ix_user_name (first_name, last_name),
 	FOREIGN KEY (fk_pf_user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (fk_pf_city_id) REFERENCES cities (id) ON UPDATE CASCADE
+	FOREIGN KEY (fk_pf_city_id) REFERENCES cities (id) 
 );
 
 DROP TABLE IF EXISTS ozon_cards;
@@ -49,7 +50,6 @@ CREATE TABLE ozon_cards(
 	FOREIGN KEY (fk_oc_user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
--- пока не уверена, нужно ли это
 DROP TABLE IF EXISTS payment_cards;
 CREATE TABLE payment_cards(
 	id SERIAL PRIMARY KEY,
@@ -120,10 +120,10 @@ CREATE TABLE discounts (
 	fk_d_product_id INT UNSIGNED,
 	discount FLOAT DEFAULT 0.0 COMMENT 'Величина скидки от 0.0 до 1.0',
 	only_ozon_card ENUM('0', '1'),
-	CONSTRAINT discout CHECK (discount >= 0 AND discount < 1),
+	CONSTRAINT discout_percent CHECK (discount >= 0.0 AND discount < 1.0),
 	FOREIGN KEY (fk_d_user_id) REFERENCES users (id),
 	FOREIGN KEY (fk_d_product_id) REFERENCES products (id),
-	CHECK (fk_d_user_id IS NULL XOR fk_d_product_id IS NULL)
+	CONSTRAINT discout_user_product CHECK ((fk_d_user_id IS NOT NULL) OR (fk_d_product_id IS NOT NULL))
 );
 
 DROP TABLE IF EXISTS cashback_ozon_card;
