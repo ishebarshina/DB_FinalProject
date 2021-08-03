@@ -11,8 +11,8 @@ USE ozon;
 -- Если список избранного пуст 
 -- и город в профиле не указан, то просто 10 самых поплуярных продуктов
 
-SET GLOBAL log_bin_trust_function_creators = 1; 
-SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+-- SET GLOBAL log_bin_trust_function_creators = 1; 
+-- SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
 -- функция, которая возвращает 1, если список избранного не пустой, 0 - пустой
 DROP FUNCTION IF EXISTS exist_favourite; 
