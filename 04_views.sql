@@ -45,14 +45,18 @@ CREATE OR REPLACE VIEW prod_shop_price AS
 			sh.id AS 'sh_id',
 			sh.name 'sh_name', 
 			ps.total AS 'amount',
-			(FIRST_VALUE (ps.price * (1 - IFNULL(CAST(d.only_ozon_card AS UNSIGNED) -1, 0) * IFNULL(d.discount, 0))) 
+			(FIRST_VALUE (ps.price ) 
 				OVER (PARTITION BY ps.fk_product_id 
 				ORDER BY ps.price ASC)) 
 				AS 'price, any paynment',
+			(FIRST_VALUE (ps.price * (1 - IFNULL(CAST(d.only_ozon_card AS UNSIGNED) -1, 0) * IFNULL(d.discount, 0))) 
+				OVER (PARTITION BY ps.fk_product_id 
+				ORDER BY ps.price ASC)) 
+				AS 'price with personal discount, any paynment',
 			(FIRST_VALUE (ps.price * (1 - IFNULL(d.discount, 0))) 
 				OVER (PARTITION BY ps.fk_product_id 
 				ORDER BY ps.price ASC)) 
-				AS 'price, ozon_card'
+				AS 'price with personal discount, ozon_card'
 	FROM produtcs_shops ps 
 		INNER JOIN shops sh 
 			ON sh.id = ps.fk_shop_id 
