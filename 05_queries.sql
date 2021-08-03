@@ -38,7 +38,7 @@ BEGIN
 	FROM favourites 
 	WHERE fk_fv_user_id = in_user_id
 	)
-	SELECT pc.pd_id, pc.pd_name, pc.pd_catalog_id, pc.rating, pc.popularity 
+	SELECT pc.pd_name AS 'product', pc.catalog_name AS 'catalog' , pc.rating
 	FROM (
 		SELECT 	*
 		FROM popular_products pp
@@ -50,9 +50,11 @@ BEGIN
 				INNER JOIN catalogs c 
 					ON c.id = pd.fk_pd_catalog_id
 		)
-	) AS pc LEFT JOIN fv_user 
+	) AS pc 
+	LEFT JOIN fv_user 
 		ON pc.pd_id = fv_user.fk_fv_product_id 
 	WHERE fv_user.fk_fv_product_id IS NULL 
+	
 	ORDER BY  popularity DESC , pd_catalog_id ASC
 	LIMIT 10;
 END $$
@@ -63,18 +65,18 @@ DELIMITER $$
 CREATE PROCEDURE fv_recommend_0(in_user_id INT)
 BEGIN
 	SET @in_user = in_user_id;
-	SELECT pf.fk_pf_city_id AS city_id, 
-		opd.fk_opd_product_id AS product_id, 
-		SUM(opd.total) AS total_orders, 
-		IFNULL(pd.rating, 0) AS rating,
-		(IFNULL(rating, 0) * 0.8 + SUM(opd.total) * 0.2) AS popularity
+	SELECT 	pd.name AS 'product',
+			c.name AS 'catalog',
+			IFNULL(pd.rating, 0) AS rating
 	FROM (orders_products opd 
 		LEFT JOIN orders o 
 			ON opd.fk_opd_order_id = o.id 
 		LEFT JOIN profiles pf 
 			ON o.fk_o_user_id = pf.fk_pf_user_id 
 		LEFT JOIN products pd 
-			ON pd.id = opd.fk_opd_product_id) 
+			ON pd.id = opd.fk_opd_product_id
+		INNER JOIN catalogs c
+			ON c.id = pd.fk_pd_catalog_id) 
 	WHERE pf.fk_pf_city_id IN (
 		SELECT ci.id
 		FROM profiles pf 
@@ -82,8 +84,8 @@ BEGIN
 			ON ci.id = pf.fk_pf_city_id 
 		WHERE pf.fk_pf_user_id = @in_user
 	)
-	GROUP BY product_id
-	ORDER BY popularity DESC
+	GROUP BY opd.fk_opd_product_id
+	ORDER BY (IFNULL(rating, 0) * 0.8 + SUM(opd.total) * 0.2) DESC
 	LIMIT 10;
 END $$
 DELIMITER ;
@@ -104,7 +106,11 @@ BEGIN
 					THEN CALL fv_recommend_0(in_user_id);
 					ELSE 
 					BEGIN 
-						SELECT * FROM popular_products LIMIT 10;
+						SELECT 	pp.pd_name AS 'product',
+								pp.catalog_name AS 'catalog',
+								pp.rating AS 'rating'
+						FROM popular_products pp 
+						LIMIT 10;
 					END;
 				END IF;
 			END;
@@ -117,7 +123,6 @@ DELIMITER ;
 CALL fv_recommend(60);
 CALL fv_recommend(3);
 CALL fv_recommend(4);
-
 
 
 

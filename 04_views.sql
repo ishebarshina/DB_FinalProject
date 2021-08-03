@@ -23,15 +23,20 @@ SELECT * FROM product_rating pr;
 -- popularity = 0.8 * rating  + 0.2 * total_pd_orders
 -- рейтинг самых популярных товаров
 CREATE OR REPLACE VIEW popular_products AS
-	SELECT 	pr.id AS 'pd_id', pr.name AS 'pd_name', pr.fk_pd_catalog_id AS 'pd_catalog_id', 
-		pr.rating AS 'rating', 
+	SELECT 	pr.id AS 'pd_id', 
+			pr.name AS 'pd_name', 
+			pr.fk_pd_catalog_id AS 'pd_catalog_id', 
+			c.name AS 'catalog_name',
+			pr.rating AS 'rating', 
 		(IFNULL(pr.rating, 0) * 0.8 + epo.total_pd_orders  * 0.2) AS popularity
 	FROM product_rating pr
 		INNER JOIN each_product_order epo
-		ON pr.id = epo.id
+			ON pr.id = epo.id
+		INNER JOIN catalogs c 
+			ON c.id = pr.fk_pd_catalog_id
 	ORDER BY popularity DESC, fk_pd_catalog_id ASC, pr.id ASC; 
 
-SELECT * FROM popular_products pr;
+SELECT catalog_name FROM popular_products pr;
 
 
 
