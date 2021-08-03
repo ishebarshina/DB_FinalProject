@@ -142,7 +142,8 @@ CREATE TABLE reviews(
 	stars TINYINT NOT NULL,
 	content TEXT,
 	FOREIGN KEY (fk_rw_poducts_id) REFERENCES products (id),
-	FOREIGN KEY (fk_rw_user_id) REFERENCES users (id)
+	FOREIGN KEY (fk_rw_user_id) REFERENCES users (id),
+	CONSTRAINT stars_number CHECK (stars >= 1 AND stars <= 5)
 );
 
 DROP TABLE IF EXISTS favourites;
