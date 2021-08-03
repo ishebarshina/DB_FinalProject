@@ -63,13 +63,13 @@ CREATE TABLE payment_cards(
 DROP TABLE IF EXISTS catalogs;
 CREATE TABLE catalogs(
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(255)
+	name VARCHAR(255) UNIQUE
 );
 
 DROP TABLE IF EXISTS shops;
 CREATE TABLE shops(
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(255)
+	name VARCHAR(255) UNIQUE
 );
 
 DROP TABLE IF EXISTS products;
@@ -79,7 +79,8 @@ CREATE TABLE products(
 	fk_pd_catalog_id INT UNSIGNED NOT NULL,
 	desription TEXT,
 	rating FLOAT,
-	FOREIGN KEY (fk_pd_catalog_id) REFERENCES catalogs (id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (fk_pd_catalog_id) REFERENCES catalogs (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	INDEX ix_pd_rating (rating)
 );
 
 DROP TABLE IF EXISTS products_shops;
@@ -142,7 +143,8 @@ CREATE TABLE reviews(
 	stars TINYINT NOT NULL,
 	content TEXT,
 	FOREIGN KEY (fk_rw_poducts_id) REFERENCES products (id),
-	FOREIGN KEY (fk_rw_user_id) REFERENCES users (id)
+	FOREIGN KEY (fk_rw_user_id) REFERENCES users (id),
+	CONSTRAINT stars_number CHECK (stars >= 1 AND stars <= 5)
 );
 
 DROP TABLE IF EXISTS favourites;
