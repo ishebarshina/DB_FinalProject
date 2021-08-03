@@ -38,14 +38,30 @@ CREATE OR REPLACE VIEW popular_products AS
 
 SELECT catalog_name FROM popular_products pr;
 
+--  каком магазине этот товар продается по самой низкой цене, цена с учетом скидки
+CREATE OR REPLACE VIEW prod_shop_price AS
+	SELECT 	pd.id AS 'pd_id', 
+			pd.name AS 'pd_name',
+			sh.id AS 'sh_id',
+			sh.name 'sh_name', 
+			ps.total AS 'amount',
+			(FIRST_VALUE (ps.price * (1 - IFNULL(CAST(d.only_ozon_card AS UNSIGNED) -1, 0) * IFNULL(d.discount, 0))) 
+				OVER (PARTITION BY ps.fk_product_id 
+				ORDER BY ps.price ASC)) 
+				AS 'price, any paynment',
+			(FIRST_VALUE (ps.price * (1 - IFNULL(d.discount, 0))) 
+				OVER (PARTITION BY ps.fk_product_id 
+				ORDER BY ps.price ASC)) 
+				AS 'price, ozon_card'
+	FROM produtcs_shops ps 
+		INNER JOIN shops sh 
+			ON sh.id = ps.fk_shop_id 
+		INNER JOIN products pd 
+			ON pd.id = ps.fk_product_id 
+		LEFT JOIN discounts d
+			ON d.fk_d_product_id = pd.id;
 
-
-
-
-
-
-
-
+SELECT * FROM prod_shop_price;
 
 
 

@@ -38,7 +38,9 @@ BEGIN
 	FROM favourites 
 	WHERE fk_fv_user_id = in_user_id
 	)
-	SELECT pc.pd_name AS 'product', pc.catalog_name AS 'catalog' , pc.rating
+	SELECT 	pc.pd_name AS 'product', 
+			pc.catalog_name AS 'catalog', 
+			pc.rating AS 'rating'
 	FROM (
 		SELECT 	*
 		FROM popular_products pp
